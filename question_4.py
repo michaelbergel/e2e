@@ -9,7 +9,7 @@ def simulation_sl():
     # variable to keep track of # of games
     num_games = 0
 
-    # 3 arrays to record games' results, B's starting position and respective probabilities
+    # 5 arrays to record games' results, B's starting position and respective probabilities
     games = []
     A_outcome = []
     B_outcome = []
@@ -115,7 +115,7 @@ def simulation_sl():
         A_outcome.append(A_wins)
         B_outcome.append(B_wins)
         B_start_pos.append(add_one-1)
-        probability_of_A.append(round(A_wins/rounds, 2))
+        probability_of_A.append(round(A_wins/rounds, 4))
 
 
     return games, A_outcome, B_outcome, B_start_pos, probability_of_A
@@ -126,6 +126,13 @@ if __name__ == "__main__":
     # start simulations!
     games, A, B, B_start, prob_A = simulation_sl()
 
-    # print results
+    # show results
     for i, j, k, m, p in zip(games, A, B, B_start, prob_A):
-        print("Game: {0} A: {1} B: {2} B's starting at: {3} Prob. of A: {4}".format(i, j, k, m, p))
+        print("Game: {0} - A has won: {1}; B has won: {2}; B started at: {3}; Prob. of A: {4}".format(i, j, k, m, p))
+
+    # find from probabilities in prob_A the closest to 0.5 and store it's position into variable menor
+    menor = prob_A.index(min(prob_A, key=lambda x:abs(x-0.5)))
+    print("The position B should start to balance probabilities is: {0}".format(B_start[menor]))
+
+
+
