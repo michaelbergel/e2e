@@ -16,14 +16,17 @@ def simulation_sl():
     # variable that determines the number of rounds
     rounds = 10000
 
-    # count how many times a snake has been activated
-    snakes = 0
+    # variable rolls will be added everytime there is a turn
+    rolls = 0
+
+
 
     # while we haven't reached 10,000 games, keep on playing!
     while A_wins + B_wins < rounds:
 
         # variable to decide whose turn is it. If odd, player B; If even, player A.
         turn = 0
+
 
         # while none of the players have achieved 1, the game continues
         player_A = 0
@@ -34,17 +37,21 @@ def simulation_sl():
         position_B = 0
 
 
-        # this variable will be used to keep track of when a snake gets activated
-        position_snaked = 0
 
         # while none of the players have won (i.e. 1), keep on playing
         while player_A == 0 and player_B == 0:
 
+
             # roll the dice and store it in the variable dice
             dice = random.randint(1, 6)
 
-            # position_snaked must zero in every round
-            position_snaked = 0
+            # variable chance has a 50% chance of being 1 or 0
+            # this will be used to determine whether to get on the ladder or not
+            chance = random.randint(0, 1)
+
+            # this variable will be used for calculation purposes
+            # it must start every turn with the value of 0
+            C = 0
 
 
             # check if it's A's turn and move it accordingly
@@ -62,18 +69,32 @@ def simulation_sl():
 
                 # take A up/down any chute/ladder. If the value is not in dictionary
                 # keep the original position.
-                position_snaked = SNAKES.get(position_A, position_A)
+                position_A = SNAKES.get(position_A, position_A)
 
-                # if position_A > position_snaked, it means the snake has been activated
-                # the variable snakes then is added by 1 and position_A is updated accordingly
-                if position_A > position_snaked:
-                    snakes += 1
-                    position_A = position_snaked
+                # variable ladder_position_A will get the original position if it's not a ladder
+                # or it will get the position it'd go to IF it were to take the ladder
+                ladder_position_A = LADDERS.get(position_A, position_A)
 
+                # to determine whether to take the ladder, we'll use the variable chance
+                # a value of 0 means it doesn't take the ladder; a value of 1 means it should take it
 
-                position_A = LADDERS.get(position_A, position_A)
+                # ----- P.S. the calculation below could be simplified through an IF statement
+                # ----- but would take more time than performing the calculations directly
+
+                # variable C below will only be used for calculation purposes. It shall take the extra
+                # squares it would move up if it takes the ladder or 0 if it's not in a ladder position at all
+                C = ladder_position_A - position_A
+
+                # logic for code below: C will have either the delta for the jump or will be 0.
+                # if chance is 0, the player stays where it is, verifiable through position_A.
+                # if chance is 1, the player will take the ladder, moving the delta + poisiton_A
+                position_A = chance * (C) + position_A
+
 
                 turn +=1
+
+                # rolls must be added by 1 every time the turn changes
+                rolls += 1
 
             # check if it's B's turn and move it accordingly
             # if turn is odd, the modulo will be 1, signaling it's B's turn
@@ -89,38 +110,53 @@ def simulation_sl():
 
                 # take B up/down any chute/ladder. If the value is not in dictionary
                 # keep the original position.
-                position_snaked = SNAKES.get(position_B, position_B)
+                # take A up/down any chute/ladder. If the value is not in dictionary
+                # keep the original position.
+                position_B = SNAKES.get(position_B, position_B)
 
-                # if position_B > position_snaked, it means the snake has been activated
-                # the variable snakes then is added by 1 and position_B is updated accordingly
-                if position_B > position_snaked:
-                    snakes += 1
-                    position_B = position_snaked
+                # variable ladder_position_A will get the original position if it's not a ladder
+                # or it will get the position it'd go to IF it were to take the ladder
+                ladder_position_B = LADDERS.get(position_B, position_B)
 
-                position_B = LADDERS.get(position_B, position_B)
+                # to determine whether to take the ladder, we'll use the variable chance
+                # a value of 0 means it doesn't take the ladder; a value of 1 means it should take it
+
+                # ----- P.S. the calculation below could be simplified through an IF statement
+                # ----- but would take more time than performing the calculations directly
+
+                # variable C below will only be used for calculation purposes. It shall take the extra
+                # squares it would move up if it takes the ladder or 0 if it's not in a ladder position at all
+                C = ladder_position_B - position_B
+
+                # logic for code below: C will have either the delta for the jump or will be 0.
+                # if chance is 0, the player stays where it is, verifiable through position_A.
+                # if chance is 1, the player will take the ladder, moving the delta + poisiton_A
+                position_B = chance * (C) + position_B
+
 
                 turn +=1
+
+                # rolls must be added by 1 every time the turn changes
+                rolls += 1
 
 
         # add 1 to last round to fix the counter of turns played
         turn += 1
+        rolls += 1
 
         # add 1 to num_games once round is over
-        num_games =+ 1
+        num_games += 1
 
-    return A_wins, B_wins, snakes, rounds
+    return A_wins, B_wins, num_games, rolls
 
 
 if __name__ == "__main__":
 
     # start simulations!
-    A, B, snakes, rounds = simulation_sl()
+    A, B, games, rolls = simulation_sl()
 
-    # round prob of A winning to 2 decimals
-    prob_A = round(A/rounds, 2)
-    print("A has won {0} and B has won {1} ".format(A, B))
-    print("A has thus a probability of winning of {0} / {1}, or approximately {2} ".format(A, rounds, prob_A))
 
-    # snakes per round on avg = total snakes activated / 10000
-    avg_snakes = round(snakes/rounds, 2)
-    print("A snake has been activated {0} times in {1} games, an average of {2} per game ". format(snakes, rounds, avg_snakes))
+    print("A has won {0} and B has won {1} in {2} games played and {3} rounds".format(A, B, games, rolls))
+
+    avg = round(rolls/games, 2)
+    print("The average of rolls with 50% probability of taking a ladder is {0} / {1}, or approximately {2} ".format(rolls, games, avg))
