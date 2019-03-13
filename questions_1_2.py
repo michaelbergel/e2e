@@ -34,9 +34,6 @@ def simulation_sl():
         position_B = 0
 
 
-        # this variable will be used to keep track of when a snake gets activated
-        position_snaked = 0
-
         # while none of the players have won (i.e. 1), keep on playing
         while player_A == 0 and player_B == 0:
 
