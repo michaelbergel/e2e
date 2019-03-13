@@ -16,14 +16,13 @@ def simulation_sl():
     # variable that determines the number of rounds
     rounds = 10000
 
-    # count how many times a snake has been activated
-    snakes = 0
 
     # while we haven't reached 10,000 games, keep on playing!
     while A_wins + B_wins < rounds:
 
         # variable to decide whose turn is it. If odd, player B; If even, player A.
         turn = 0
+
 
         # while none of the players have achieved 1, the game continues
         player_A = 0
@@ -33,18 +32,27 @@ def simulation_sl():
         position_A = 0
         position_B = 0
 
+        # variable snake will control when a snake is activated. must be zeroed in every game
+        snake = 0
 
-        # this variable will be used to keep track of when a snake gets activated
-        position_snaked = 0
+
 
         # while none of the players have won (i.e. 1), keep on playing
         while player_A == 0 and player_B == 0:
 
+
             # roll the dice and store it in the variable dice
             dice = random.randint(1, 6)
 
-            # position_snaked must zero in every round
-            position_snaked = 0
+
+            # the variable will be used to keep track of whether this is the first
+            # snake that shows up for B
+            snake_position_B = 0
+
+
+            # this variable will be used for calculation purposes
+            # it must start every turn with the value of 0
+            C = 0
 
 
             # check if it's A's turn and move it accordingly
@@ -62,18 +70,12 @@ def simulation_sl():
 
                 # take A up/down any chute/ladder. If the value is not in dictionary
                 # keep the original position.
-                position_snaked = SNAKES.get(position_A, position_A)
-
-                # if position_A > position_snaked, it means the snake has been activated
-                # the variable snakes then is added by 1 and position_A is updated accordingly
-                if position_A > position_snaked:
-                    snakes += 1
-                    position_A = position_snaked
-
-
+                position_A = SNAKES.get(position_A, position_A)
                 position_A = LADDERS.get(position_A, position_A)
 
+
                 turn +=1
+
 
             # check if it's B's turn and move it accordingly
             # if turn is odd, the modulo will be 1, signaling it's B's turn
@@ -88,39 +90,48 @@ def simulation_sl():
                 position_B += dice
 
                 # take B up/down any chute/ladder. If the value is not in dictionary
-                # keep the original position.
-                position_snaked = SNAKES.get(position_B, position_B)
+                # keep the original position. Analyze if it's the first snake to skip it.
 
-                # if position_B > position_snaked, it means the snake has been activated
-                # the variable snakes then is added by 1 and position_B is updated accordingly
-                if position_B > position_snaked:
-                    snakes += 1
-                    position_B = position_snaked
+                snake_position_B = SNAKES.get(position_B, position_B)
 
+
+                # logic for code below: C will have either the delta for the jump or will be 0.
+                # if C is > 0 it means the player is at a snake position, so the variable snake
+                # should be added 1.
+                # moreover, if and only if the value of variable snake == 1 (i.e meaning it's the
+                # first snake it steps on), the player should skip it and don't activate it
+                C = position_B - snake_position_B
+                if C > 0:
+                    snake += 1
+                    if snake != 1:
+                        position_B = snake_position_B
+
+
+                # let B take the ladder, as usual
                 position_B = LADDERS.get(position_B, position_B)
 
+
                 turn +=1
+
 
 
         # add 1 to last round to fix the counter of turns played
         turn += 1
 
         # add 1 to num_games once round is over
-        num_games =+ 1
+        num_games += 1
 
-    return A_wins, B_wins, snakes, rounds
+    return A_wins, B_wins, num_games
 
 
 if __name__ == "__main__":
 
     # start simulations!
-    A, B, snakes, rounds = simulation_sl()
+    A, B, games = simulation_sl()
 
-    # round prob of A winning to 2 decimals
-    prob_A = round(A/rounds, 2)
-    print("A has won {0} and B has won {1} ".format(A, B))
-    print("A has thus a probability of winning of {0} / {1}, or approximately {2} ".format(A, rounds, prob_A))
 
-    # snakes per round on avg = total snakes activated / 10000
-    avg_snakes = round(snakes/rounds, 2)
-    print("A snake has been activated {0} times in {1} games, an average of {2} per game ". format(snakes, rounds, avg_snakes))
+    print("A has won {0} and B has won {1} in {2} games played\n".format(A, B, games))
+
+    # prob of A winning
+    prob = A/games
+    print("The new probability for A, given that B gets to bypass the first snake is {0} / {1}, or approximately {2} ".format(A, games, prob))

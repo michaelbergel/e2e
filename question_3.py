@@ -110,11 +110,9 @@ def simulation_sl():
 
                 # take B up/down any chute/ladder. If the value is not in dictionary
                 # keep the original position.
-                # take A up/down any chute/ladder. If the value is not in dictionary
-                # keep the original position.
                 position_B = SNAKES.get(position_B, position_B)
 
-                # variable ladder_position_A will get the original position if it's not a ladder
+                # variable ladder_position_B will get the original position if it's not a ladder
                 # or it will get the position it'd go to IF it were to take the ladder
                 ladder_position_B = LADDERS.get(position_B, position_B)
 
@@ -129,8 +127,8 @@ def simulation_sl():
                 C = ladder_position_B - position_B
 
                 # logic for code below: C will have either the delta for the jump or will be 0.
-                # if chance is 0, the player stays where it is, verifiable through position_A.
-                # if chance is 1, the player will take the ladder, moving the delta + poisiton_A
+                # if chance is 0, the player stays where it is, verifiable through position_B.
+                # if chance is 1, the player will take the ladder, moving the delta + poisiton_B
                 position_B = chance * (C) + position_B
 
 

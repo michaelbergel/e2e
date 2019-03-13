@@ -130,9 +130,9 @@ if __name__ == "__main__":
     for i, j, k, m, p in zip(games, A, B, B_start, prob_A):
         print("Game: {0} - A has won: {1}; B has won: {2}; B started at: {3}; Prob. of A: {4}".format(i, j, k, m, p))
 
-    # find from probabilities in prob_A the closest to 0.5 and store it's position into variable menor
-    menor = prob_A.index(min(prob_A, key=lambda x:abs(x-0.5)))
-    print("The position B should start to balance probabilities is: {0}".format(B_start[menor]))
+    # find from probabilities in prob_A the closest to 0.5 and store it's position into variable closest
+    closest = prob_A.index(min(prob_A, key=lambda x:abs(x-0.5)))
+    print("\n The position B should start to balance probabilities out is: {0}\n".format(B_start[closest]))
 
 
 
