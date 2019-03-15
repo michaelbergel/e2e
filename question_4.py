@@ -22,7 +22,7 @@ def simulation_sl():
     B_wins = 0
 
     # variable that determines the number of rounds
-    rounds = 10000
+    rounds = 100
 
     # this variable will be used to add one square to B's starting point
     # after running 10K simulations until a threshold is reached
@@ -111,7 +111,7 @@ def simulation_sl():
         add_one += 1
 
         # record the simulation number and its outcomes
-        games.append(round(num_games/10000))
+        games.append(round(num_games/rounds))
         A_outcome.append(A_wins)
         B_outcome.append(B_wins)
         B_start_pos.append(add_one-1)
